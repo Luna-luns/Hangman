@@ -1,4 +1,5 @@
 import random
+import string
 
 
 def open_char(_word_with_hidden_letters: str, _random_word: str, _user_input: str) -> str:
@@ -17,11 +18,21 @@ def replace_chars(_random_word: str) -> str:
 
 def check_success(_user_word: str, _random_word: str) -> str:
     if _user_word == _random_word:
-        return f'\n{_user_word}\nYou guessed the word!\nYou survived!'
+        return f'\nYou guessed the word {_user_word}!\nYou survived!'
     return '\nYou lost!'
 
 
+def check_correct_input(_user_input: str, _english_alphabet: str, _chars_set: set) -> str:
+    if len(_user_input.strip()) > 1 or len(_user_input.strip()) == 0:
+        return 'Please, input a single letter.'
+    if _user_input not in _english_alphabet:
+        return 'Please, enter a lowercase letter from the English alphabet.'
+    if _user_input in _chars_set:
+        return "You've already guessed this letter."
+
+
 list_of_words = ['python', 'java', 'swift', 'javascript']
+english_alphabet = string.ascii_lowercase
 random_word = random.choice(list_of_words)
 random_word_set = set(random_word)
 word_with_hidden_letters = replace_chars(random_word)
@@ -31,17 +42,17 @@ attempts = 8
 while attempts > 0:
     print(word_with_hidden_letters)
     user_input = input('Input a letter:').strip()
-    if user_input in chars_set:
-        print('No improvements. ')
-        attempts -= 1
+    check_result = check_correct_input(user_input, english_alphabet, chars_set)
+    if check_result:
+        print(check_result)
     else:
-        pass
-    if user_input in random_word_set:
-        word_with_hidden_letters = open_char(word_with_hidden_letters, random_word, user_input)
-        chars_set.add(user_input)
-    else:
-        print("That letter doesn't appear in the word.")
-        attempts -= 1
+        if user_input in random_word_set:
+            word_with_hidden_letters = open_char(word_with_hidden_letters, random_word, user_input)
+            chars_set.add(user_input)
+        else:
+            print("That letter doesn't appear in the word.")
+            chars_set.add(user_input)
+            attempts -= 1
     if word_with_hidden_letters == random_word:
         break
 print(check_success(word_with_hidden_letters, random_word))
